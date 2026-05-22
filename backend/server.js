@@ -11,7 +11,7 @@ const {
   DB_PASSWORD = "admin123",
   DB_NAME = "tienda_perritos",
   DB_PORT = 3306, 
-} = process.env; 
+} = process.env;  
 
 app.use(cors());
 app.use(express.json());
