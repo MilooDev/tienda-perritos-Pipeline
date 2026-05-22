@@ -10,7 +10,7 @@ const {
   DB_USER = "root",
   DB_PASSWORD = "admin123",
   DB_NAME = "tienda_perritos",
-  DB_PORT = 3306,
+  DB_PORT = 3306, 
 } = process.env;
 
 app.use(cors());
