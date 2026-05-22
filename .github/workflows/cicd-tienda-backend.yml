@@ -36,4 +36,4 @@ jobs:
           aws ssm send-command \
             --instance-ids ${{ secrets.EC2_BACKEND_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }} && docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest && docker stop tienda-backend || true && docker rm tienda-backend || true && docker run -d --name tienda-backend -p 3001:3001 -e DB_HOST=i-0a43726c03ab04643 -e DB_USER=root -e DB_PASSWORD=admin123 -e DB_NAME=tienda_perritos ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
+            --parameters commands="aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }} && docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest && docker stop tienda-backend || true && docker rm tienda-backend || true && docker run -d --name tienda-backend -p 3001:3001 -e DB_HOST=10.0.171.177 -e DB_USER=root -e DB_PASSWORD=admin123 -e DB_NAME=tienda_perritos ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
