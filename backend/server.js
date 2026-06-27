@@ -5,8 +5,9 @@ const mysql = require("mysql2/promise");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Configuración de conexión utilizando la IP privada interna de la instancia EC2
 const {
-  DB_HOST = "10.0.18.214", // IP Privada de tu EC2 con MySQL
+  DB_HOST = "10.0.3.6", 
   DB_USER = "root",
   DB_PASSWORD = "admin123",
   DB_NAME = "tienda_perritos",
@@ -18,7 +19,7 @@ app.use(express.json());
 
 let pool;
 
-// Inicializar pool de conexiones
+// Inicializar pool de conexiones hacia MySQL
 async function initDb() {
   try {
     pool = mysql.createPool({
@@ -31,19 +32,19 @@ async function initDb() {
       connectionLimit: 10,
       queueLimit: 0,
     });
-    console.log("Pool de conexiones MySQL inicializado.");
+    console.log("Pool de conexiones MySQL inicializado con éxito en la IP 10.0.3.6.");
   } catch (err) {
     console.error("Error al inicializar pool de MySQL:", err);
   }
 }
 
-// Helper para manejar errores
+// Helper centralizado para el manejo de excepciones
 function handleError(res, error, message = "Error interno del servidor") {
   console.error(error);
   res.status(500).json({ message });
 }
 
-// Obtener todos los productos
+// Endpoint: Obtener la lista completa de productos
 app.get("/api/productos", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT id, nombre, descripcion, precio, stock FROM productos ORDER BY id DESC");
@@ -53,7 +54,7 @@ app.get("/api/productos", async (req, res) => {
   }
 });
 
-// Obtener un producto por ID
+// Endpoint: Obtener un producto específico por ID
 app.get("/api/productos/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -67,7 +68,7 @@ app.get("/api/productos/:id", async (req, res) => {
   }
 });
 
-// Crear un nuevo producto
+// Endpoint: Registrar un nuevo producto en la base de datos
 app.post("/api/productos", async (req, res) => {
   const { nombre, descripcion, precio, stock } = req.body;
 
@@ -88,7 +89,7 @@ app.post("/api/productos", async (req, res) => {
   }
 });
 
-// Actualizar un producto
+// Endpoint: Actualizar los valores de un producto existente
 app.put("/api/productos/:id", async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, precio, stock } = req.body;
@@ -114,7 +115,7 @@ app.put("/api/productos/:id", async (req, res) => {
   }
 });
 
-// Eliminar un producto
+// Endpoint: Eliminar un registro de la tabla productos
 app.delete("/api/productos/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -128,12 +129,12 @@ app.delete("/api/productos/:id", async (req, res) => {
   }
 });
 
-// Endpoint de salud
+// Endpoint de telemetría y salud del servicio (Health Check)
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend de tienda de perritos en ejecución." });
 });
 
-// Iniciar servidor
+// Inicialización del servicio Express
 app.listen(PORT, async () => {
   console.log(`Servidor backend escuchando en puerto ${PORT}`);
   await initDb();
